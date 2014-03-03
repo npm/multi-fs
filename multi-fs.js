@@ -1,4 +1,5 @@
 var url = require('url')
+var util = require('util')
 
 var MultiFSClient = require('./lib/client-base.js')
 var MultiFSClientFS = require('./lib/client-fs.js')
@@ -6,8 +7,17 @@ var MultiFSClientSSH = require('./lib/client-ssh.js')
 
 module.exports = MultiFS
 
-function MultiFS (clients) {
+util.inherits(MultiFS, MultiFSClient)
+
+function MultiFS (clients, debug) {
   this.clients = clients.map(setupClient)
+  this.name = this.clients.map(function(c) {
+    return c.name
+  }).join(',')
+  this._debug = debug
+  this._clients = clients
+
+  MultiFSClient.call(this)
 }
 
 function setupClient(client) {
@@ -57,13 +67,22 @@ MultiFS.prototype.writeFile = function(path, data, enc, cb) {
   this.exec("writeFile", [ path, data, enc ], cb)
 }
 
-MultiFS.prototype.md5 = function(path, cb) {
-  this.exec("md5", [ path ], cb)
-}
+var simpleMethods =
+  [
+    'md5',
+    'rmr',
+    'unlink',
+    'rmdir',
+    'mkdir',
+    'mkdirp',
+    'readdir'
+  ]
 
-MultiFS.prototype.stat = function(path, cb) {
-  this.exec("stat", [ path ], cb)
-}
+simpleMethods.forEach(function(m) {
+  MultiFS.prototype[m] = function(path, cb) {
+    this.exec(m, [ path ], cb)
+  }
+})
 
 MultiFS.prototype.exec = function(cmd, args, cb) {
   this.clients.forEach(function (client, i) {

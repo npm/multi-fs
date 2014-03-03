@@ -77,9 +77,6 @@ Writing functions:
 * `writeFile(path, data, [encoding], cb)`
 * `rmr(path, cb)`
 * `mkdirp(path, cb)`
-
-TODO for SSH (done for FS)
-
 * `mkdir(path, cb)`
 * `unlink(path, cb)`
 * `rmdir(path, cb)`

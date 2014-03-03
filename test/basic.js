@@ -22,18 +22,18 @@ test('make mf', function(t) {
     { type: 'fs', path: locshort + '/1' },
     base + '/2',
     locshort + '/3',
-    '~/' + homeshort,
-    'ssh://localhost:' + homeshort + '/4',
-    'ssh://localhost' + base + '/5',
+    '~/' + homeshort + '/4',
+    'ssh://localhost:' + homeshort + '/5',
+    'ssh://localhost' + base + '/6',
     {
       type: 'ssh',
       agent: process.env.SSH_AUTH_SOCK,
-      path: homeshort + '/6'
+      path: homeshort + '/7'
     },
     {
       type: 'ssh',
       agent: process.env.SSH_AUTH_SOCK,
-      path: base + '/7'
+      path: base + '/8'
     }
   ]
 
@@ -42,8 +42,26 @@ test('make mf', function(t) {
   t.end()
 })
 
+test('mkdirp', function(t) {
+  mf.mkdirp('a/b/c/d/e/f', function(er, res, data) {
+    if (er)
+      throw er
+    t.equal(res, undefined)
+    t.end()
+  })
+})
+
+test('mkdirp', function(t) {
+  mf.rmr('a/b/c/d', function(er, res, data) {
+    if (er)
+      throw er
+    t.equal(res, undefined)
+    t.end()
+  })
+})
+
 test('writeFile', function(t) {
-  mf.writeFile('foo', 'bar\n', 'ascii', function(er, res, data) {
+  mf.writeFile('a/b/c/foo', 'bar\n', 'ascii', function(er, res, data) {
     if (er)
       throw er
     t.equal(res, undefined)
@@ -52,7 +70,7 @@ test('writeFile', function(t) {
 })
 
 test('readFile', function(t) {
-  mf.readFile('foo', 'ascii', function(er, res, data) {
+  mf.readFile('a/b/c/foo', 'ascii', function(er, res, data) {
     if (er)
       throw er
     t.equal(res, 'bar\n')
@@ -61,10 +79,20 @@ test('readFile', function(t) {
 })
 
 test('md5', function(t) {
-  mf.md5('foo', function(er, res, data) {
+  mf.md5('a/b/c/foo', function(er, res, data) {
     if (er)
       throw er
     t.equal(res, 'c157a79031e1c40f85931829bc5fc552')
+    t.end()
+  })
+})
+
+test('unlink', function(t) {
+  console.error('unlink')
+  mf.unlink('a/b/c/foo', function(er, res, data) {
+    if (er)
+      throw er
+    t.equal(res, undefined)
     t.end()
   })
 })
