@@ -4,6 +4,7 @@ var util = require('util')
 var MultiFSClient = require('./lib/client-base.js')
 var MultiFSClientFS = require('./lib/client-fs.js')
 var MultiFSClientSSH = require('./lib/client-ssh.js')
+var MultiFSClientManta = require('./lib/client-manta.js')
 
 module.exports = MultiFS
 
@@ -25,7 +26,7 @@ function setupClient(client) {
     return client
 
   if (typeof client === 'string') {
-    if (client.match(/^~~/))
+    if (client.match(/^~~/) || client.match(/^manta:/))
       return new MultiFSClientManta(client)
     else if (client.match(/^ssh:/))
       return new MultiFSClientSSH(client)
@@ -108,6 +109,7 @@ MultiFS.prototype.exec = function(cmd, args, cb) {
     results[i] = res
     extra[i] = raw
     if (!er && !conflict) {
+      this.debug('RESULT %d %s', i, cmd)
       var k = JSON.stringify(res)
       matches[k] = (matches[k] || 0) + 1
 
