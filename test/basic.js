@@ -34,6 +34,29 @@ test('make mf', function(t) {
       type: 'ssh',
       agent: process.env.SSH_AUTH_SOCK,
       path: base + '/8'
+    },
+    '~~/stor/multi-fs-testing/9',
+    'manta:/' + process.env.MANTA_USER + '/stor/multi-fs/10',
+
+    {
+      path: '~~/stor/multi-fs-testing/11',
+      type: 'manta',
+      env: {},
+      argv: [
+        '-a', process.env.MANTA_USER,
+        '-k', process.env.MANTA_KEY_ID,
+        '-u', process.env.MANTA_URL
+      ]
+    },
+    {
+      path: '~~/stor/multi-fs-testing/12',
+      type: 'manta',
+      argv: [],
+      env: {
+        MANTA_USER: process.env.MANTA_USER,
+        MANTA_KEY_ID: process.env.MANTA_KEY_ID,
+        MANTA_URL: process.env.MANTA_URL
+      }
     }
   ]
 
