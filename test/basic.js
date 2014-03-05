@@ -36,7 +36,7 @@ test('make mf', function(t) {
       path: base + '/8'
     },
     '~~/stor/multi-fs-testing/9',
-    'manta:/' + process.env.MANTA_USER + '/stor/multi-fs/10',
+    'manta:/' + process.env.MANTA_USER + '/stor/multi-fs-testing/10',
 
     {
       path: '~~/stor/multi-fs-testing/11',
