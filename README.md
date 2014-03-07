@@ -6,12 +6,12 @@ Current supported targets:
 
 1. File system root paths
 2. Remote unix systems (via ssh)
+3. Joyent Manta
 
 Planned supported targets:
 
-1. Joyent Manta
-2. Rackspace Cloud Files
-3. Amazon S3
+1. Rackspace Cloud Files
+2. Amazon S3
 
 ## USAGE
 
@@ -68,10 +68,6 @@ Reading functions:
 * `readFile(path, [encoding], cb)`
 * `md5(path, cb)`
 
-TODO:
-
-* `createReadStream(path, cb)`
-
 Writing functions:
 
 * `writeFile(path, data, [encoding], cb)`
@@ -80,10 +76,6 @@ Writing functions:
 * `mkdir(path, cb)`
 * `unlink(path, cb)`
 * `rmdir(path, cb)`
-
-TODO:
-
-* `createWriteStream(path, cb)`
 
 ### Results
 
@@ -95,3 +87,21 @@ Callbacks are called with the following arguments:
 * `result`  The result of the operation.  If consistent results are
   not found, then this will be set to null.
 * `data`  Errors, results, and extra metadata from all hosts.
+
+## Streams
+
+I think it'd be great to have `createReadStream(p, cb)` and
+`createWriteStream(p, cb)` methods on the client, especially since all
+the targets (fs, ssh2, manta, etc.) support streams already.
+
+However, especially for readable streams, it's not at all clear how to
+handle inconsistencies.  Right now, `readFile` will raise an
+`Inconsistent Data` error if two hosts return different stuff.
+However, with a readable stream, it'd have to be checking each chunk
+somehow, and that gets pretty complicated.
+
+Probably that "check multiple streams and make sure they're all
+producing the same data" thing should be a separate module.
+
+For writable streams, it's a bit easier, since it's just a
+multiplexing pipe thing, but hasn't been done at this time.
