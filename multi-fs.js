@@ -46,7 +46,7 @@ function setupClient(client) {
   }
 }
 
-MultiFS.prototype.destroy = function() {
+MultiFS.prototype.destroy = MultiFS.prototype.close = function() {
   this.clients.forEach(function (client) {
     client.destroy()
   })
