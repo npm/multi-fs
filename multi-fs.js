@@ -57,7 +57,7 @@ MultiFS.prototype.readFile = function(path, enc, cb) {
     cb = enc
     enc = null
   }
-  this.exec("readFile", [ path, enc ], cb)
+  this.exec({ cmd: "readFile", args: [ path, enc ] }, cb)
 }
 
 MultiFS.prototype.writeFile = function(path, data, enc, cb) {
@@ -65,52 +65,80 @@ MultiFS.prototype.writeFile = function(path, data, enc, cb) {
     cb = enc
     enc = null
   }
-  this.exec("writeFile", [ path, data, enc ], cb)
+
+  this.exec({
+    cmd: "writeFile",
+    args: [ path, data, enc ]
+  }, cb)
 }
 
 var simpleMethods =
   [
-    'md5',
-    'rmr',
-    'unlink',
-    'rmdir',
-    'mkdir',
-    'mkdirp',
-    'readdir'
+    ['md5'],
+    ['rmr'],
+    ['unlink'],
+    ['rmdir'],
+    ['mkdir'],
+    ['mkdirp'],
+    ['readdir', serializeReaddir],
+    ['stat', serializeStat]
   ]
 
-simpleMethods.forEach(function(m) {
+simpleMethods.forEach(function(ms) {
+  var m = ms[0]
+  var s = ms[1]
   MultiFS.prototype[m] = function(path, cb) {
-    this.exec(m, [ path ], cb)
+    this.exec({
+      cmd: m,
+      args: [ path ],
+      serialize: s
+    }, cb)
   }
 })
 
-MultiFS.prototype.exec = function(cmd, args, cb) {
-  this.clients.forEach(function (client, i) {
-    client[cmd].apply(client, args.concat(then(i)))
-  }, this)
+function serializeStat(st) {
+  return (st.isFile ? 'f' : '-' ) + (st.isDirectory ? 'd' : '-')
+}
 
-  var quorum = this.clients.length
+function serializeReaddir(dir) {
+  return dir.sort().join(',')
+}
+
+MultiFS.prototype.exec = function(opt, cb) {
+  var set = opt.set || this.clients
+  var cmd = opt.cmd
+  var args = opt.args
+  var serialize = opt.serialize || JSON.stringify
+
   var seen = 0
-  var need = this.clients.length
+  var need = set.length
   var results = []
   var errors = []
   var extra = []
+  var clients = []
   var matches = {}
   var conflict = null
   var firstError = null
   var ended = false
+
+  set.forEach(function (client, i) {
+    client[cmd].apply(client, args.concat(then.call(this, i)))
+  }, this)
+
   function then(i) { return function(er, res, raw) {
     if (ended)
       return
+
     seen++
     firstError = firstError || er
     errors[i] = er
     results[i] = res
     extra[i] = raw
+    clients.push(set[i])
+
     if (!er && !conflict) {
       this.debug('RESULT %d %s', i, cmd)
-      var k = JSON.stringify(res)
+      var k = serialize(res)
       matches[k] = (matches[k] || 0) + 1
 
       if (Object.keys(matches).length > 1) {
@@ -119,7 +147,7 @@ MultiFS.prototype.exec = function(cmd, args, cb) {
     }
     if (seen === need)
       return done()
-  }}
+  }.bind(this) }
 
   function done() {
     if (ended)
@@ -130,7 +158,8 @@ MultiFS.prototype.exec = function(cmd, args, cb) {
     var data = {
       errors: errors,
       results: results,
-      extra: extra
+      extra: extra,
+      clients: clients
     }
 
     var er = firstError || conflict

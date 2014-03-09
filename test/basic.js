@@ -92,6 +92,30 @@ test('writeFile', function(t) {
   })
 })
 
+test('stat', function(t) {
+  var n = 2
+
+  mf.stat('a/b/c/foo', function(er, res, data) {
+    if (er) {
+      console.error(er, res, data)
+      throw er
+    }
+    t.same(res, { isFile: true, isDirectory: false })
+    if (--n === 0)
+      t.end()
+  })
+
+  mf.stat('a/b/c', function(er, res, data) {
+    if (er) {
+      console.error(er, res, data)
+      throw er
+    }
+    t.same(res, { isFile: false, isDirectory: true })
+    if (--n === 0)
+      t.end()
+  })
+})
+
 test('readFile', function(t) {
   mf.readFile('a/b/c/foo', 'ascii', function(er, res, data) {
     if (er)
