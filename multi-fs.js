@@ -57,7 +57,18 @@ MultiFS.prototype.readFile = function(path, enc, cb) {
     cb = enc
     enc = null
   }
-  this.exec({ cmd: "readFile", args: [ path, enc ] }, cb)
+
+  this.exec({ cmd: "md5", args: [ path ] }, function(er, md5, results) {
+    if (er)
+      return cb(er, null, results)
+
+    var client = results.clients[0]
+    this.exec({
+      cmd: "readFile",
+      args: [ path, enc ],
+      set: [ client ]
+    }, cb)
+  }.bind(this))
 }
 
 MultiFS.prototype.writeFile = function(path, data, enc, cb) {

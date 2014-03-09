@@ -88,6 +88,14 @@ Callbacks are called with the following arguments:
   not found, then this will be set to null.
 * `data`  Errors, results, and extra metadata from all hosts.
 
+For all methods except `readfile`, it performs the operation on all
+targets, and will raise an `Inconsistent Data` error if they do not
+return matching results.
+
+For `readfile`, it will call `md5` and compare hashes, and then, if
+the results all match, it will read the actual file from the first
+client that returned an md5 hash.
+
 ## Streams
 
 I think it'd be great to have `createReadStream(p, cb)` and
