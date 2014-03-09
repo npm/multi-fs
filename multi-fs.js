@@ -66,7 +66,8 @@ MultiFS.prototype.readFile = function(path, enc, cb) {
     this.exec({
       cmd: "readFile",
       args: [ path, enc ],
-      set: [ client ]
+      set: [ client ],
+      serialize: function (n) { return md5 }
     }, cb)
   }.bind(this))
 }
