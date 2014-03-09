@@ -74,8 +74,17 @@ test('mkdirp', function(t) {
   })
 })
 
-test('mkdirp', function(t) {
+test('rmr', function(t) {
   mf.rmr('a/b/c/d', function(er, res, data) {
+    if (er)
+      throw er
+    t.equal(res, undefined)
+    t.end()
+  })
+})
+
+test('writeFilep', function(t) {
+  mf.writeFilep('a/x/y/z/foo', 'bar\n', 'ascii', function(er, res, data) {
     if (er)
       throw er
     t.equal(res, undefined)
@@ -121,7 +130,12 @@ test('readFile', function(t) {
     if (er)
       throw er
     t.equal(res, 'bar\n')
-    t.end()
+    mf.readFile('a/x/y/z/foo', 'ascii', function(er, res, data) {
+      if (er)
+        throw er
+      t.equal(res, 'bar\n')
+      t.end()
+    })
   })
 })
 

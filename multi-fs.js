@@ -71,17 +71,19 @@ MultiFS.prototype.readFile = function(path, enc, cb) {
   }.bind(this))
 }
 
-MultiFS.prototype.writeFile = function(path, data, enc, cb) {
-  if (typeof enc === 'function') {
-    cb = enc
-    enc = null
-  }
+;[ 'writeFile', 'writeFilep' ].forEach(function(m) {
+  MultiFS.prototype[m] = function(path, data, enc, cb) {
+    if (typeof enc === 'function') {
+      cb = enc
+      enc = null
+    }
 
-  this.exec({
-    cmd: "writeFile",
-    args: [ path, data, enc ]
-  }, cb)
-}
+    this.exec({
+      cmd: m,
+      args: [ path, data, enc ]
+    }, cb)
+  }
+})
 
 var simpleMethods =
   [
