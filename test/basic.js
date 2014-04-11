@@ -1,6 +1,7 @@
 var test = require('tap').test
 var MF = require('../multi-fs.js')
 var path = require('path')
+var fs = require('fs')
 
 var base = path.resolve(__dirname, 'fixtures')
 
@@ -96,6 +97,15 @@ test('writeFile', function(t) {
   mf.writeFile('a/b/c/foo', 'bar\n', 'ascii', function(er, res, data) {
     if (er)
       throw er
+    t.equal(res, undefined)
+    t.end()
+  })
+})
+
+test('writeFile stream input', function(t) {
+  var source = fs.createReadStream('./cat_in_a_box.jpg', 'binary')
+  mf.writeFile('/a/b/c/stream', source, 'binary', function(er, res, data) {
+    if (er) throw er
     t.equal(res, undefined)
     t.end()
   })

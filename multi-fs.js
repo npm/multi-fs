@@ -1,3 +1,4 @@
+var stream = require('stream')
 var url = require('url')
 var util = require('util')
 
@@ -52,39 +53,53 @@ MultiFS.prototype.destroy = MultiFS.prototype.close = function() {
   })
 }
 
-MultiFS.prototype.readFile = function(path, enc, cb) {
+MultiFS.prototype.readFile = function(target, enc, cb) {
   if (typeof enc === 'function') {
     cb = enc
     enc = null
   }
 
-  this.exec({ cmd: "md5", args: [ path ] }, function(er, md5, results) {
+  this.exec({ cmd: "md5", args: [ target ] }, function(er, md5, results) {
     if (er)
       return cb(er, null, results)
 
     var client = results.clients[0]
     this.exec({
       cmd: "readFile",
-      args: [ path, enc ],
+      args: [ target, enc ],
       set: [ client ],
       serialize: function (n) { return md5 }
     }, cb)
   }.bind(this))
 }
 
-;[ 'writeFile', 'writeFilep' ].forEach(function(m) {
-  MultiFS.prototype[m] = function(path, data, enc, cb) {
-    if (typeof enc === 'function') {
-      cb = enc
-      enc = null
-    }
-
-    this.exec({
-      cmd: m,
-      args: [ path, data, enc ]
-    }, cb)
+MultiFS.prototype.writeFile = function writeFile(target, data, enc, cb) {
+  if (typeof enc === 'function') {
+    cb = enc
+    enc = null
   }
-})
+
+  if (typeof data === 'object' && data instanceof stream.Readable) {
+    data.setMaxListeners(this.clients.length * 2)
+  }
+
+  this.exec({
+    cmd: 'writeFile',
+    args: [ target, data, enc ]
+  }, cb)
+}
+
+MultiFS.prototype.writeFilep = function writeFilep(target, data, enc, cb) {
+  if (typeof enc === 'function') {
+    cb = enc
+    enc = null
+  }
+
+  this.exec({
+    cmd: 'writeFilep',
+    args: [ target, data, enc ]
+  }, cb)
+}
 
 var simpleMethods =
   [
@@ -101,10 +116,10 @@ var simpleMethods =
 simpleMethods.forEach(function(ms) {
   var m = ms[0]
   var s = ms[1]
-  MultiFS.prototype[m] = function(path, cb) {
+  MultiFS.prototype[m] = function(target, cb) {
     this.exec({
       cmd: m,
-      args: [ path ],
+      args: [ target ],
       serialize: s
     }, cb)
   }
