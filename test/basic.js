@@ -15,6 +15,9 @@ var homeshort = base
 if (home && base.indexOf(home) === 0)
   homeshort = base.substr(home.length).replace(/^\/+/, '')
 
+
+console.error('ssh://localhost:' + homeshort + '/5')
+
 var mf
 
 test('make mf', function(t) {
@@ -103,7 +106,7 @@ test('writeFile', function(t) {
 })
 
 test('writeFile stream input', function(t) {
-  var source = fs.createReadStream('./cat_in_a_box.jpg', 'binary')
+  var source = fs.createReadStream(path.resolve(__dirname, 'cat_in_a_box.jpg'), 'binary')
   mf.writeFile('/a/b/c/stream', source, 'binary', function(er, res, data) {
     if (er) throw er
     t.equal(res, undefined)
