@@ -232,9 +232,6 @@ MultiFS.prototype._process = function process() {
       this._processing++
       this.emit('task', task)
       this.executeTask(task)
-    } else if (this._tasksDone && this._processing === 0) {
-      // TODO
-      this._done()
     }
   }
 }
