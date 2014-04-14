@@ -221,7 +221,11 @@ MultiFS.prototype.executeTask = function executeTask(task) {
 var taskId = 0
 
 MultiFS.prototype._process = function process() {
-  this.debug('process %d(%d) of %d', this._processing, this._concurrency, this._tasks.length)
+  this.debug('process %d(%d) of %d',
+          this._processing,
+          this._concurrency,
+          this._tasks.length)
+
   if (this._processing < this._concurrency) {
     var task = this._tasks.shift()
     if (task) {
@@ -235,7 +239,7 @@ MultiFS.prototype._process = function process() {
   }
 }
 
-MultiFS.prototype.exec = function pushTask(opts, callback) {
+MultiFS.prototype.exec = function exec(opts, callback) {
   assert(opts);
   assert(callback && typeof callback === 'function');
 
