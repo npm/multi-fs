@@ -1,6 +1,7 @@
 var test = require('tap').test
 var MF = require('../multi-fs.js')
 var path = require('path')
+var fs = require('fs')
 
 var base = path.resolve(__dirname, 'fixtures')
 
@@ -13,6 +14,9 @@ var home = process.env.HOME
 var homeshort = base
 if (home && base.indexOf(home) === 0)
   homeshort = base.substr(home.length).replace(/^\/+/, '')
+
+
+console.error('ssh://localhost:' + homeshort + '/5')
 
 var mf
 
@@ -96,6 +100,15 @@ test('writeFile', function(t) {
   mf.writeFile('a/b/c/foo', 'bar\n', 'ascii', function(er, res, data) {
     if (er)
       throw er
+    t.equal(res, undefined)
+    t.end()
+  })
+})
+
+test('writeFile stream input', function(t) {
+  var source = fs.createReadStream(path.resolve(__dirname, 'cat_in_a_box.jpg'), 'binary')
+  mf.writeFile('/a/b/c/stream', source, 'binary', function(er, res, data) {
+    if (er) throw er
     t.equal(res, undefined)
     t.end()
   })

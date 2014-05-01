@@ -1,5 +1,7 @@
-var url = require('url')
-var util = require('util')
+var assert = require('assert'),
+    stream = require('stream'),
+    url = require('url'),
+    util = require('util')
 
 var MultiFSClient = require('./lib/client-base.js')
 var MultiFSClientFS = require('./lib/client-fs.js')
@@ -17,6 +19,11 @@ function MultiFS (clients, debug) {
   }).join(',')
   this._debug = debug
   this._clients = clients
+
+  this._tasks = []
+  this._inFlight = {}
+  this._processing = 0
+  this._concurrency = 1
 
   MultiFSClient.call(this)
 }
@@ -52,39 +59,53 @@ MultiFS.prototype.destroy = MultiFS.prototype.close = function() {
   })
 }
 
-MultiFS.prototype.readFile = function(path, enc, cb) {
+MultiFS.prototype.readFile = function(target, enc, cb) {
   if (typeof enc === 'function') {
     cb = enc
     enc = null
   }
 
-  this.exec({ cmd: "md5", args: [ path ] }, function(er, md5, results) {
+  this.exec({ cmd: "md5", args: [ target ] }, function(er, md5, results) {
     if (er)
       return cb(er, null, results)
 
     var client = results.clients[0]
     this.exec({
       cmd: "readFile",
-      args: [ path, enc ],
+      args: [ target, enc ],
       set: [ client ],
       serialize: function (n) { return md5 }
     }, cb)
   }.bind(this))
 }
 
-;[ 'writeFile', 'writeFilep' ].forEach(function(m) {
-  MultiFS.prototype[m] = function(path, data, enc, cb) {
-    if (typeof enc === 'function') {
-      cb = enc
-      enc = null
-    }
-
-    this.exec({
-      cmd: m,
-      args: [ path, data, enc ]
-    }, cb)
+MultiFS.prototype.writeFile = function writeFile(target, data, enc, cb) {
+  if (typeof enc === 'function') {
+    cb = enc
+    enc = null
   }
-})
+
+  if (typeof data === 'object' && data instanceof stream.Readable) {
+    data.setMaxListeners(this.clients.length * 2)
+  }
+
+  this.exec({
+    cmd: 'writeFile',
+    args: [ target, data, enc ]
+  }, cb)
+}
+
+MultiFS.prototype.writeFilep = function writeFilep(target, data, enc, cb) {
+  if (typeof enc === 'function') {
+    cb = enc
+    enc = null
+  }
+
+  this.exec({
+    cmd: 'writeFilep',
+    args: [ target, data, enc ]
+  }, cb)
+}
 
 var simpleMethods =
   [
@@ -101,10 +122,10 @@ var simpleMethods =
 simpleMethods.forEach(function(ms) {
   var m = ms[0]
   var s = ms[1]
-  MultiFS.prototype[m] = function(path, cb) {
+  MultiFS.prototype[m] = function(target, cb) {
     this.exec({
       cmd: m,
-      args: [ path ],
+      args: [ target ],
       serialize: s
     }, cb)
   }
@@ -118,7 +139,12 @@ function serializeReaddir(dir) {
   return dir.sort().join(',')
 }
 
-MultiFS.prototype.exec = function(opt, cb) {
+MultiFS.prototype.executeTask = function executeTask(task) {
+
+  var self = this
+  var opt = task.opts
+  var cb = task.cb
+
   var set = opt.set || this.clients
   var cmd = opt.cmd
   var args = opt.args
@@ -156,7 +182,7 @@ MultiFS.prototype.exec = function(opt, cb) {
       matches[k] = (matches[k] || 0) + 1
 
       if (Object.keys(matches).length > 1) {
-        conflict = new Error("Inconsistent Results")
+        conflict = new Error('Inconsistent Results')
       }
     }
     if (seen === need)
@@ -178,9 +204,62 @@ MultiFS.prototype.exec = function(opt, cb) {
 
     var er = firstError || conflict
     if (er)
-      return cb(er, null, data)
+      cb(er, null, data)
+    else
+      cb(null, results[0], data) // all in agreement, no errors
 
-    // all in agreement, no errors
-    return cb(null, results[0], data)
+    // clean up after this task & kick off the next
+    self._processing--
+    clearTimeout(task.timer)
+    delete self._inFlight[task.id]
+    self._process()
+  }
+}
+
+// Task queue
+
+var taskId = 0
+
+MultiFS.prototype._process = function process() {
+  this.debug('process %d(%d) of %d',
+          this._processing,
+          this._concurrency,
+          this._tasks.length)
+
+  if (this._processing < this._concurrency) {
+    var task = this._tasks.shift()
+    if (task) {
+      this._processing++
+      this.emit('task', task)
+      this.executeTask(task)
+    }
+  }
+}
+
+MultiFS.prototype.exec = function exec(opts, callback) {
+  assert(opts);
+  assert(callback && typeof callback === 'function');
+
+  var task = {
+    opts: opts,
+    cb: callback,
+    id: taskId++
+  };
+  this.debug('pushTask', task)
+
+  this._inFlight[task.id] = task
+  if (this._timeout > 0) {
+    task.timer = setTimeout(taskTimeout.bind(this, task), this._timeout)
+    task.timer.unref()
+  }
+  this._tasks.push(task)
+  this._process()
+}
+
+function taskTimeout(task) {
+  if (this._inFlight[task.id]) {
+    var er = new Error('timeout')
+    er.task = task
+    this.emit('error', er)
   }
 }
