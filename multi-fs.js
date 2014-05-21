@@ -6,6 +6,7 @@ var assert = require('assert'),
 var MultiFSClient = require('./lib/client-base.js')
 var MultiFSClientFS = require('./lib/client-fs.js')
 var MultiFSClientSSH = require('./lib/client-ssh.js')
+var MultiFSClientSCP = require('./lib/client-scp.js')
 var MultiFSClientManta = require('./lib/client-manta.js')
 
 module.exports = MultiFS
@@ -48,6 +49,8 @@ function setupClient(client) {
       return new MultiFSClientFS(client.path)
     case 'manta':
       return new MultiFSClientManta(client)
+    case 'scp':
+      return new MultiFSClientSCP(client)
     default:
       throw new Error('Undefined client type: ' + JSON.stringify(client))
   }

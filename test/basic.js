@@ -15,9 +15,6 @@ var homeshort = base
 if (home && base.indexOf(home) === 0)
   homeshort = base.substr(home.length).replace(/^\/+/, '')
 
-
-console.error('ssh://localhost:' + homeshort + '/5')
-
 var mf
 
 test('make mf', function(t) {
@@ -61,6 +58,12 @@ test('make mf', function(t) {
         MANTA_KEY_ID: process.env.MANTA_KEY_ID,
         MANTA_URL: process.env.MANTA_URL
       }
+    },
+    {
+      path: homeshort + '/9',
+      type: 'scp',
+      user: process.env.USER,
+      host: 'localhost'
     }
   ]
 
