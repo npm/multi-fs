@@ -44,7 +44,18 @@ var client = new MultiFS([
     // alternative:   "client": myMantaClient,
     args: [ "-a", "username" ],
     env: { MANTA_KEY_ID: process.env.MANTA_KEY_ID, etc }
-  }
+  },
+
+  // you can use a variant of the ssh client that does file
+  // copies by spawning scp. the options are identical to ssh
+  {
+    type: "scp",
+    host: "some-host",
+    user: "some-user",
+    identity: "/home/.ssh/id_rsa_some_key",
+    path: "path/in/home"
+  },
+  "scp://user@host:path/in/home",
 ])
 
 // Paths are not allowed to traverse up past the parent.

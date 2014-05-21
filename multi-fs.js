@@ -38,6 +38,8 @@ function setupClient(client) {
       return new MultiFSClientManta(client)
     else if (client.match(/^ssh:/))
       return new MultiFSClientSSH(client)
+    else if (client.match(/^scp:/))
+      return new MultiFSClientSCP(client)
     else
       return new MultiFSClientFS(client)
   }
