@@ -7,7 +7,7 @@ var mpath = '~~/stor/multi-fs-testing'
 require('./zz-cleanup.js')
 
 test('setup', function(t) {
-  for (var i = 0; i < 9; i++) {
+  for (var i = 0; i < 11; i++) {
     mkdirp.sync(path.resolve(__dirname, 'fixtures/' + i))
   }
   t.pass('ok')

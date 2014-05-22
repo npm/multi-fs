@@ -15,9 +15,6 @@ var homeshort = base
 if (home && base.indexOf(home) === 0)
   homeshort = base.substr(home.length).replace(/^\/+/, '')
 
-
-console.error('ssh://localhost:' + homeshort + '/5')
-
 var mf
 
 test('make mf', function(t) {
@@ -39,6 +36,13 @@ test('make mf', function(t) {
       agent: process.env.SSH_AUTH_SOCK,
       path: base + '/8'
     },
+    {
+      path: homeshort + '/9',
+      type: 'scp',
+      user: process.env.USER,
+      host: 'localhost'
+    },
+    'scp://localhost:' + base + '/10',
     '~~/stor/multi-fs-testing/9',
     'manta:/' + process.env.MANTA_USER + '/stor/multi-fs-testing/10',
 
@@ -61,7 +65,7 @@ test('make mf', function(t) {
         MANTA_KEY_ID: process.env.MANTA_KEY_ID,
         MANTA_URL: process.env.MANTA_URL
       }
-    }
+    },
   ]
 
   mf = new MF(targets)
@@ -162,7 +166,6 @@ test('md5', function(t) {
 })
 
 test('unlink', function(t) {
-  console.error('unlink')
   mf.unlink('a/b/c/foo', function(er, res, data) {
     if (er)
       throw er
