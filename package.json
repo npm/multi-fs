@@ -1,6 +1,6 @@
 {
   "name": "multi-fs",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A client for doing FS operations in multiple places in sync.",
   "main": "multi-fs.js",
   "directories": {
