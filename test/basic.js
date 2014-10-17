@@ -45,7 +45,6 @@ test('make mf', function(t) {
     'scp://localhost:' + base + '/10',
     '~~/stor/multi-fs-testing/9',
     'manta:/' + process.env.MANTA_USER + '/stor/multi-fs-testing/10',
-
     {
       path: '~~/stor/multi-fs-testing/11',
       type: 'manta',
