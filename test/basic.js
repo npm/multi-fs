@@ -19,7 +19,6 @@ var mf
 
 test('make mf', function(t) {
   var targets = [
-  /*
     { type: 'fs', path: base + '/0' },
     { type: 'fs', path: locshort + '/1' },
     base + '/2',
@@ -44,9 +43,7 @@ test('make mf', function(t) {
       host: 'localhost'
     },
     'scp://localhost:' + base + '/10',
-*/
     '~~/stor/multi-fs-testing/9',
-/*
     'manta:/' + process.env.MANTA_USER + '/stor/multi-fs-testing/10',
     {
       path: '~~/stor/multi-fs-testing/11',
@@ -68,7 +65,6 @@ test('make mf', function(t) {
         MANTA_URL: process.env.MANTA_URL
       }
     },
-*/
   ]
 
   mf = new MF(targets)
