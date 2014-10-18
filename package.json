@@ -32,6 +32,9 @@
     "manta"
   ],
   "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+  "contributors": [
+    "C J Silverio <ceejceej@gmail.com>"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/npm/multi-fs/issues"

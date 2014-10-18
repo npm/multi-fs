@@ -13,6 +13,9 @@ Planned supported targets:
 1. Rackspace Cloud Files
 2. Amazon S3
 
+[![on npm](http://img.shields.io/npm/v/multi-fs.svg?style=flat)](https://www.npmjs.org/package/multi-fs)  [![Dependencies](http://img.shields.io/david/npm/multi-fs.svg?style=flat)](https://david-dm.org/izs/multi-fs)
+
+
 ## USAGE
 
 ```javascript

@@ -19,6 +19,7 @@ var mf
 
 test('make mf', function(t) {
   var targets = [
+  /*
     { type: 'fs', path: base + '/0' },
     { type: 'fs', path: locshort + '/1' },
     base + '/2',
@@ -43,7 +44,9 @@ test('make mf', function(t) {
       host: 'localhost'
     },
     'scp://localhost:' + base + '/10',
+*/
     '~~/stor/multi-fs-testing/9',
+/*
     'manta:/' + process.env.MANTA_USER + '/stor/multi-fs-testing/10',
     {
       path: '~~/stor/multi-fs-testing/11',
@@ -65,10 +68,22 @@ test('make mf', function(t) {
         MANTA_URL: process.env.MANTA_URL
       }
     },
+*/
   ]
 
   mf = new MF(targets)
   t.pass('made mf')
+  t.end()
+})
+
+test('cleanPath can be safely called twice', function(t) {
+  var Base = require('../lib/client-base')
+  var client = new Base()
+  client.path = '/path/start'
+  var testp = 'whatever'
+  var res1 = client.cleanPath(testp)
+  var res2 = client.cleanPath(res1)
+  t.equal(res1, res2)
   t.end()
 })
 
@@ -164,8 +179,17 @@ test('md5', function(t) {
   })
 })
 
+test('rename', function(t) {
+  mf.rename('a/b/c/foo', 'a/b/c/bar', function(er, res, data) {
+    if (er)
+      throw er
+    t.equal(res, undefined)
+    t.end()
+  })
+})
+
 test('unlink', function(t) {
-  mf.unlink('a/b/c/foo', function(er, res, data) {
+  mf.unlink('a/b/c/bar', function(er, res, data) {
     if (er)
       throw er
     t.equal(res, undefined)

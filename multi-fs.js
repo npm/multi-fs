@@ -112,6 +112,13 @@ MultiFS.prototype.writeFilep = function writeFilep(target, data, enc, cb) {
   }, cb)
 }
 
+MultiFS.prototype.rename = function rename(src, dest, cb) {
+  this.exec({
+    cmd: 'rename',
+    args: [ src, dest ]
+  }, cb)
+}
+
 var simpleMethods =
   [
     ['md5'],
