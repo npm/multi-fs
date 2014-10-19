@@ -1,11 +1,14 @@
 {
   "name": "multi-fs",
-  "version": "0.4.1",
   "description": "A client for doing FS operations in multiple places in sync.",
-  "main": "multi-fs.js",
-  "directories": {
-    "test": "test"
+  "version": "0.4.1",
+  "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+  "bugs": {
+    "url": "https://github.com/npm/multi-fs/issues"
   },
+  "contributors": [
+    "C J Silverio <ceejceej@gmail.com>"
+  ],
   "dependencies": {
     "manta-client": "^1.0.5",
     "once": "~1.3.1",
@@ -17,13 +20,10 @@
     "rimraf": "~2.2.6",
     "tap": "~0.4.13"
   },
-  "scripts": {
-    "test": "tap test/*.js"
+  "directories": {
+    "test": "test"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/npm/multi-fs"
-  },
+  "homepage": "https://github.com/npm/multi-fs",
   "keywords": [
     "fs",
     "redundancy",
@@ -31,13 +31,14 @@
     "scp",
     "manta"
   ],
-  "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
-  "contributors": [
-    "C J Silverio <ceejceej@gmail.com>"
-  ],
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/npm/multi-fs/issues"
+  "main": "multi-fs.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/npm/multi-fs"
   },
-  "homepage": "https://github.com/npm/multi-fs"
+  "scripts": {
+    "test": "tap test/*.js",
+    "lint": "jshint multi-fs.js lib/*.js"
+  }
 }
