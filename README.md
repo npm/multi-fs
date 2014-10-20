@@ -113,8 +113,8 @@ client that returned an md5 hash.
 
 Calls to `writeFile` are atomic on all clients.  It will write to a
 temporary file like `foo.txt.TMP.cafef00d` and then rename to
-`foo.txt` when finished.  At this time, it does not attempt to clean
-up these tmp files on a failed write.
+`foo.txt` when finished.  If the write fails, it makes a best effort
+attempt to unlink the temporary file.
 
 ### Stat Objects
 
