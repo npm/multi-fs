@@ -85,11 +85,12 @@ Reading functions:
 Writing functions:
 
 * `writeFile(path, data, [encoding], cb)`
-* `rmr(path, cb)`
-* `mkdirp(path, cb)`
+* `writeFilep(path, data, [encoding], cb)`
 * `mkdir(path, cb)`
+* `mkdirp(path, cb)`
 * `unlink(path, cb)`
 * `rmdir(path, cb)`
+* `rmr(path, cb)`
 
 ### Results
 
@@ -109,6 +110,18 @@ return matching results.
 For `readfile`, it will call `md5` and compare hashes, and then, if
 the results all match, it will read the actual file from the first
 client that returned an md5 hash.
+
+Calls to `writeFile` are atomic on all clients.  It will write to a
+temporary file like `foo.txt.TMP.cafef00d` and then rename to
+`foo.txt` when finished.  At this time, it does not attempt to clean
+up these tmp files on a failed write.
+
+### Stat Objects
+
+Because different systems represent file/directory stats differently,
+stat calls return a simple object with only `isFile` and `iDirectory`
+boolean members as the first argument.  The original stat objects from
+the underlying systems are returned in the `data` argument.
 
 ## Streams
 
