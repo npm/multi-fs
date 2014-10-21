@@ -102,7 +102,7 @@ test('rmr', function(t) {
 })
 
 test('writeFilep', function(t) {
-  mf.writeFilep('a/x/y/z/foo', 'bar\n', 'ascii', function(er, res, data) {
+  mf.writeFilep('a/x/y/z/foo', 'new content\n', 'ascii', function(er, res, data) {
     if (er)
       throw er
     t.equal(res, undefined)
@@ -160,7 +160,7 @@ test('readFile', function(t) {
     mf.readFile('a/x/y/z/foo', 'ascii', function(er, res, data) {
       if (er)
         throw er
-      t.equal(res, 'bar\n')
+      t.equal(res, 'new content\n')
       t.end()
     })
   })
@@ -182,6 +182,18 @@ test('rename', function(t) {
     t.equal(res, undefined)
     t.end()
   })
+})
+
+test('rename blows away the destination', function(t) {
+    mf.rename('a/x/y/z/foo', 'a/b/c/bar', function(er, res, data) {
+      if (er) throw er
+      mf.readFile('a/b/c/bar', 'ascii', function(er, res, data) {
+        if (er) throw er
+        t.equal(res, 'new content\n')
+        t.pass('rename force')
+        t.end()
+      })
+    })
 })
 
 test('unlink', function(t) {
