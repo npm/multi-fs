@@ -43,6 +43,7 @@ test('make mf', function(t) {
       host: 'localhost'
     },
     'scp://localhost:' + base + '/10',
+    /*
     '~~/stor/multi-fs-testing/9',
     'manta:/' + process.env.MANTA_USER + '/stor/multi-fs-testing/10',
     {
@@ -65,6 +66,7 @@ test('make mf', function(t) {
         MANTA_URL: process.env.MANTA_URL
       }
     },
+    */
   ]
 
   mf = new MF(targets)
@@ -124,7 +126,17 @@ test('writeFile stream input', function(t) {
   mf.writeFile('/a/b/c/stream', source, 'binary', function(er, res, data) {
     if (er) throw er
     t.equal(res, undefined)
-    t.end()
+    mf.stat('/a/b/c/stream', function(err, res, data) {
+      if (er) {
+        console.error(er, res, data)
+        throw er
+      }
+      t.same(res, { isFile: true, isDirectory: false })
+      data.extra.forEach(function(extra) {
+        t.equal(extra.size, 35927)
+      })
+      t.end()
+    })
   })
 })
 
