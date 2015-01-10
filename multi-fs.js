@@ -1,20 +1,18 @@
 var assert = require('assert'),
-    stream = require('stream'),
-    url = require('url'),
-    util = require('util')
+    stream             = require('stream'),
+    url                = require('url'),
+    util               = require('util'),
+    MultiFSClient      = require('./lib/client-base.js'),
+    MultiFSClientFS    = require('./lib/client-fs.js'),
+    MultiFSClientSSH   = require('./lib/client-ssh.js'),
+    MultiFSClientSCP   = require('./lib/client-scp.js'),
+    MultiFSClientManta = require('./lib/client-manta.js')
+    ;
 
-var MultiFSClient = require('./lib/client-base.js')
-var MultiFSClientFS = require('./lib/client-fs.js')
-var MultiFSClientSSH = require('./lib/client-ssh.js')
-var MultiFSClientSCP = require('./lib/client-scp.js')
-var MultiFSClientManta = require('./lib/client-manta.js')
 
-module.exports = MultiFS
-
-util.inherits(MultiFS, MultiFSClient)
-
-function MultiFS (clients, debug) {
-  this.clients = clients.map(setupClient)
+var MultiFS = module.exports = function MultiFS (clients, debug) {
+  assert(Array.isArray(clients), 'you must pass an array of client specs to the constructor');
+  this.clients = clients.map(MultiFS.setupClient)
   this.name = this.clients.map(function(c) {
     return c.name
   }).join(',')
@@ -26,10 +24,11 @@ function MultiFS (clients, debug) {
   this._processing = 0
   this._concurrency = 1
 
-  MultiFSClient.call(this)
+  MultiFSClient.call(this);
 }
+util.inherits(MultiFS, MultiFSClient);
 
-function setupClient(client) {
+MultiFS.setupClient = function setupClient(client) {
   if (client instanceof MultiFSClient || client instanceof MultiFS)
     return client
 
@@ -56,7 +55,7 @@ function setupClient(client) {
     default:
       throw new Error('Undefined client type: ' + JSON.stringify(client))
   }
-}
+};
 
 MultiFS.prototype.destroy = MultiFS.prototype.close = function() {
   this.clients.forEach(function (client) {
