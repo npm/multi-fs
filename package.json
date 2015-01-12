@@ -42,8 +42,8 @@
     "url": "git://github.com/npm/multi-fs"
   },
   "scripts": {
-    "test": "lab -v -c --timeout 10000 test-new/test-*",
-    "test-old": "tap test/*.js",
+    "test-new": "lab -v -c --timeout 10000 test-new/test-*",
+    "test": "tap test/*.js",
     "lint": "jshint multi-fs.js lib/*.js test/*.js"
   }
 }
