@@ -120,6 +120,7 @@ MultiFS.prototype.rename = function rename(src, dest, cb) {
 
 var simpleMethods =
   [
+    ['sha1'],
     ['md5'],
     ['rmr'],
     ['unlink'],

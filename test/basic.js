@@ -187,6 +187,15 @@ test('md5', function(t) {
   })
 })
 
+test('shasum', function(t) {
+  mf.sha1('a/b/c/stream', function(er, res, data) {
+    if (er)
+      throw er
+    t.equal(res, '86121e01e0311445e81957736bd70c0ee4352c0f')
+    t.end()
+  });
+})
+
 test('rename', function(t) {
   mf.rename('a/b/c/foo', 'a/b/c/bar', function(er, res, data) {
     if (er)
