@@ -43,7 +43,6 @@ test('make mf', function(t) {
       host: 'localhost'
     },
     'scp://localhost:' + base + '/10',
-    /*
     '~~/stor/multi-fs-testing/9',
     'manta:/' + process.env.MANTA_USER + '/stor/multi-fs-testing/10',
     {
@@ -66,7 +65,6 @@ test('make mf', function(t) {
         MANTA_URL: process.env.MANTA_URL
       }
     },
-    */
   ]
 
   mf = new MF(targets)
