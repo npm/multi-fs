@@ -119,8 +119,8 @@ MultiFS.prototype.rename = function rename(src, dest, cb) {
   }, cb)
 }
 
-MultiFS.prototype.atMostOne = function(command,args,cb){
-  var clients = client.clients.slice()
+MultiFS.prototype.justOne = function(command,args,cb){
+  var clients = this.clients.slice()
   var last = 0
 
   args = args||[]
