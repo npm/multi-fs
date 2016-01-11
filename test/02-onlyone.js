@@ -5,10 +5,11 @@ var fs = require('fs')
 
 var base = path.resolve(__dirname, 'fixtures')
 
-test("only uploads to one random client",function(){
+test("only uploads to one random client",function(t){
 
-  MF([
-  
-  ])
+  t.end()
+  //MF([
+  //
+  //])
 
 })

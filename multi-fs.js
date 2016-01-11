@@ -292,8 +292,6 @@ MultiFS.prototype.exec = function exec(opts, callback) {
   assert(opts);
   assert(callback && typeof callback === 'function');
 
-  opts.set = opts.set || this.clients
-
   var task = {
     opts: opts,
     cb: callback,
