@@ -1,8 +1,8 @@
 var test = require('tap').test
 var path = require('path')
 var mkdirp = require('mkdirp')
-//var createClient = require('manta-client')
-//var mpath = '~~/stor/multi-fs-testing'
+var createClient = require('manta-client')
+var mpath = '~~/stor/multi-fs-testing'
 
 require('./zz-cleanup.js')
 
