@@ -119,6 +119,46 @@ MultiFS.prototype.rename = function rename(src, dest, cb) {
   }, cb)
 }
 
+MultiFS.prototype.justOne = function(command,args,cb){
+  var clients = this.clients.slice()
+  var last = 0
+
+  args = args||[]
+  if(!Array.isArray(args)){
+    return setImmediate(function(){
+      cb(new Error('args must be an array of arugments'))
+    })
+  }
+
+  var errors = []
+  execOne()
+
+  function execOne(){
+    if(!clients.length) {
+      var e = new Error("no clients remaining. see `.errors` property for each client error.")
+      e.errors = errors
+      return cb(e) 
+    }
+
+    var i = rnd(clients.length)
+    var c = clients.splice(i,1)[0]
+
+    args.push(function(err){
+      if(err) {
+        err.client = c
+        errors.push(err)
+        return execOne()
+      }
+
+      // calling callback in the context of the client so you can find out where the action was performed
+      cb.apply(c,arguments)
+    })
+
+    c[command].apply(c,args)
+  }
+
+}
+
 var simpleMethods =
   [
     ['md5'],
@@ -274,4 +314,8 @@ function taskTimeout(task) {
     er.task = task
     this.emit('error', er)
   }
+}
+
+function rnd(max){
+  return Math.floor(Math.random()*1000%max)
 }
