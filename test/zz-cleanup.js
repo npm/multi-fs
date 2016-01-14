@@ -9,7 +9,7 @@ test('cleanup fs', function(t) {
   t.pass('ok')
   t.end()
 })
-/*
+
 test('clean fishes', function(t) {
   var client = createClient()
   client.rmr(mpath, function(er) {
@@ -18,4 +18,3 @@ test('clean fishes', function(t) {
     t.end()
   })
 })
-*/
