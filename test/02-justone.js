@@ -10,13 +10,12 @@ test("only uploads to one random client",function(t){
   var path1 = __dirname+'/fixtures/0'
   var path2 = __dirname+'/fixtures/1'
 
-
   var client = new MF([path1,path2])
 
   var f = Date.now()+'rr'
 
   client.justOne('writeFilep',[f,'sup'],function(err,data){
-    t.ok(!err,'should npot have error')
+    t.ok(!err,'should not have error')
 
     var written = fs.readFileSync(path.join(this.name,f))+''
 
@@ -26,5 +25,20 @@ test("only uploads to one random client",function(t){
 
     t.end()
   })
+})
 
+test('succeeds with one bad client and one good', function(t) {
+  var badclient = new MF(['ssh://localhost:path/in/home', __dirname+'/fixtures/0'])
+  badclient.justOne('writeFilep',['yo ho ho','sup'],function(err,data){
+    t.ok(!err,'should not have error')
+    t.end()
+  })
+})
+
+test('responds with an error when all clients fail', function(t) {
+  var badclient = new MF(['ssh://localhost:path/in/home', '/path/does/not/exist'])
+  badclient.justOne('writeFilep',['yo ho ho','sup'],function(err,data){
+    t.ok(err, 'we wanted an error here!')
+    t.end()
+  })
 })
