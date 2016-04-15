@@ -36,7 +36,15 @@ test('succeeds with one bad client and one good', function(t) {
 })
 
 test('responds with an error when all clients fail', function(t) {
-  var badclient = new MF(['ssh://localhost:path/in/home', '/path/does/not/exist'])
+  var badclient = new MF(['scp://localhost:path/does/not/exist', 'scp://localhost:path/in/home'])
+  badclient.justOne('writeFilep',['yo ho ho','sup'],function(err,data){
+    t.ok(err, 'we wanted an error here!')
+    t.end()
+  })
+})
+
+test('responds with an error when talking to a host that does not exist', function(t) {
+  var badclient = new MF(['ssh://doesnotexist.npmjs.com'])
   badclient.justOne('writeFilep',['yo ho ho','sup'],function(err,data){
     t.ok(err, 'we wanted an error here!')
     t.end()
