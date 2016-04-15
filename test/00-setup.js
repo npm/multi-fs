@@ -15,6 +15,7 @@ test('setup', function(t) {
   t.end()
 })
 
+/*
 test('manta setup', function(t) {
   var client = createClient()
   var need = 0
@@ -33,3 +34,4 @@ test('manta setup', function(t) {
     }
   }
 })
+*/
