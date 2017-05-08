@@ -3,13 +3,10 @@ var MF = require('../multi-fs.js')
 var path = require('path')
 var fs = require('fs')
 
-var base = path.resolve(__dirname, 'fixtures')
-
 test("only uploads to one random client",function(t){
 
   var path1 = __dirname+'/fixtures/0'
   var path2 = __dirname+'/fixtures/1'
-
 
   var client = new MF([path1,path2])
 
