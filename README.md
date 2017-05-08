@@ -9,7 +9,7 @@ Current supported targets:
 
 [![on npm](http://img.shields.io/npm/v/multi-fs.svg?style=flat)](https://www.npmjs.org/package/multi-fs)  [![Dependencies](http://img.shields.io/david/npm/multi-fs.svg?style=flat)](https://david-dm.org/izs/multi-fs)
 
-The tests will not pass if your shell is not bash. Probably the module won't work if your shell is not bash. This is a bit of a problem, yes.
+The tests will not pass if your shell is not bash. Probably the module won't work if your shell is not bash. This is a bit of a problem, yes. Also note that to run the tests, you must be able to `ssh localhost` successfully.
 
 ## USAGE
 
