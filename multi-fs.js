@@ -7,7 +7,6 @@ var MultiFSClient = require('./lib/client-base.js')
 var MultiFSClientFS = require('./lib/client-fs.js')
 var MultiFSClientSSH = require('./lib/client-ssh.js')
 var MultiFSClientSCP = require('./lib/client-scp.js')
-var MultiFSClientManta = require('./lib/client-manta.js')
 
 module.exports = MultiFS
 
@@ -34,9 +33,7 @@ function setupClient(client) {
     return client
 
   if (typeof client === 'string') {
-    if (client.match(/^~~/) || client.match(/^manta:/))
-      return new MultiFSClientManta(client)
-    else if (client.match(/^ssh:/))
+    if (client.match(/^ssh:/))
       return new MultiFSClientSSH(client)
     else if (client.match(/^scp:/))
       return new MultiFSClientSCP(client)
@@ -49,8 +46,6 @@ function setupClient(client) {
       return new MultiFSClientSSH(client)
     case 'fs':
       return new MultiFSClientFS(client.path)
-    case 'manta':
-      return new MultiFSClientManta(client)
     case 'scp':
       return new MultiFSClientSCP(client)
     default:
@@ -137,7 +132,7 @@ MultiFS.prototype.justOne = function(command,args,cb){
     if(!clients.length) {
       var e = new Error("no clients remaining. see `.errors` property for each client error.")
       e.errors = errors
-      return cb(e) 
+      return cb(e)
     }
 
     var i = rnd(clients.length)

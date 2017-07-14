@@ -10,7 +10,6 @@
     "C J Silverio <ceejceej@gmail.com>"
   ],
   "dependencies": {
-    "manta-client": "^1.0.5",
     "once": "~1.3.1",
     "ssh2": "~0.3.6",
     "tmp": "~0.0.24"
@@ -28,8 +27,7 @@
     "fs",
     "redundancy",
     "ssh",
-    "scp",
-    "manta"
+    "scp"
   ],
   "license": "ISC",
   "main": "multi-fs.js",
