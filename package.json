@@ -17,6 +17,7 @@
   "devDependencies": {
     "mkdirp": "~0.5.0",
     "rimraf": "~2.2.6",
+    "standard-version": "^4.2.0",
     "tap": "^1.2.0"
   },
   "directories": {
@@ -37,6 +38,7 @@
   },
   "scripts": {
     "test": "tap test/*.js",
-    "lint": "jshint multi-fs.js lib/*.js"
+    "lint": "jshint multi-fs.js lib/*.js",
+    "release": "standard-version"
   }
 }
