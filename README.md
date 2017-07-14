@@ -6,7 +6,6 @@ Current supported targets:
 
 1. File system root paths
 2. Remote unix systems (via ssh)
-3. Joyent Manta
 
 Planned supported targets:
 
@@ -35,18 +34,6 @@ var client = new MultiFS([
     user: "some-user",
     identity: "/home/.ssh/id_rsa_some_key",
     path: "path/in/home"
-  },
-
-  // manta can be either an existing manta client,
-  // or an args/env pair, which will use the standard
-  // manta arguments and environment stuff.
-  {
-    type: "manta",
-    path: "~~/stor/root/path",
-
-    // alternative:   "client": myMantaClient,
-    args: [ "-a", "username" ],
-    env: { MANTA_KEY_ID: process.env.MANTA_KEY_ID, etc }
   },
 
   // you can use a variant of the ssh client that does file
@@ -127,7 +114,7 @@ the underlying systems are returned in the `data` argument.
 
 I think it'd be great to have `createReadStream(p, cb)` and
 `createWriteStream(p, cb)` methods on the client, especially since all
-the targets (fs, ssh2, manta, etc.) support streams already.
+the targets (fs, ssh2, etc.) support streams already.
 
 However, especially for readable streams, it's not at all clear how to
 handle inconsistencies.  Right now, `readFile` will raise an
