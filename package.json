@@ -1,7 +1,7 @@
 {
   "name": "multi-fs",
   "description": "A client for doing FS operations in multiple places in sync.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
   "bugs": {
     "url": "https://github.com/npm/multi-fs/issues"
